@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>遨海科技 · 销售赋能工具导航</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F2647;
+    --panel: #153463;
+    --panel-hi: #1B3A6B;
+    --blue: #4FA3F0;
+    --blue-dim: rgba(79,163,240,0.14);
+    --gold: #E8A23C;
+    --text-1: #EDF2F8;
+    --text-2: #93A8C2;
+    --hair: rgba(147,168,194,0.20);
+    --hair-strong: rgba(147,168,194,0.36);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html,body{
+    margin:0; padding:0;
+    background: var(--bg);
+    color: var(--text-1);
+    font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2{
+    font-family: Arial, 'Noto Sans SC', sans-serif;
+  }
+
+  .mono{ font-family: 'JetBrains Mono', 'SF Mono', monospace; }
+
+  /* ---------- background radar field ---------- */
+  .scene{
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(79,163,240,0.16) 0%, rgba(79,163,240,0) 45%),
+      var(--bg);
+  }
+
+  .radar-field{
+    position: absolute;
+    top: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 640px;
+    height: 640px;
+    pointer-events: none;
+    opacity: 0.6;
+  }
+  .radar-field svg{ width:100%; height:100%; display:block; }
+
+  .sweep{
+    transform-origin: 320px 320px;
+    animation: spin 9s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .sweep{ animation: none; }
+    .pulse{ animation: none !important; }
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+
+  .pulse{ animation: pulseDot 2.6s ease-in-out infinite; }
+  @keyframes pulseDot{
+    0%,100%{ opacity:1; }
+    50%{ opacity:0.32; }
+  }
+
+  /* ---------- layout ---------- */
+  .wrap{
+    position: relative;
+    z-index: 2;
+    max-width: 580px;
+    margin: 0 auto;
+    padding: 56px 22px 32px;
+  }
+
+  header.top{ text-align: center; margin-bottom: 8px; }
+
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    color: var(--blue);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .eyebrow .dot{
+    width:6px; height:6px; border-radius:50%;
+    background: var(--blue);
+    box-shadow: 0 0 8px var(--blue);
+  }
+
+  h1{
+    font-weight: 700;
+    font-size: 25px;
+    line-height: 1.5;
+    letter-spacing: 0.005em;
+    margin: 0 0 12px;
+    color: var(--text-1);
+  }
+
+  .sub{
+    color: var(--text-2);
+    font-size: 14px;
+    line-height: 1.7;
+    margin: 0 auto 32px;
+    max-width: 400px;
+  }
+
+  .statusline{
+    display:flex;
+    justify-content:center;
+    gap: 22px;
+    font-size: 12px;
+    color: var(--text-2);
+    margin-bottom: 40px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.02em;
+  }
+  .statusline span b{ color: var(--text-1); font-weight: 500; }
+
+  /* ---------- cards ---------- */
+  .stations{ display: flex; flex-direction: column; gap: 14px; }
+
+  .station{
+    display:block;
+    position: relative;
+    background: var(--panel);
+    border: 1px solid var(--hair);
+    border-radius: 12px;
+    padding: 20px 20px 18px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+  .station:hover{
+    background: var(--panel-hi);
+    border-color: var(--hair-strong);
+    transform: translateY(-1px);
+  }
+  .station:active{ transform: translateY(0); }
+
+  .station-top{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .code{
+    font-family:'JetBrains Mono',monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--blue);
+  }
+  .live{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-family:'JetBrains Mono',monospace;
+    font-size: 10.5px;
+    color: var(--text-2);
+    letter-spacing: 0.08em;
+  }
+  .live .ld{ width:5px; height:5px; border-radius:50%; background: var(--blue); }
+
+  .icon-badge{
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: var(--blue-dim);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink: 0;
+  }
+  .icon-badge svg{ width:20px; height:20px; }
+
+  .station-head{ display:flex; align-items:flex-start; gap: 14px; margin-bottom: 12px; }
+
+  .station h2{ font-size: 17px; font-weight: 700; margin: 0 0 4px; color: var(--text-1); }
+  .station p{ margin: 0; font-size: 13px; line-height: 1.65; color: var(--text-2); }
+
+  .tags{ display:flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 16px; }
+  .tag{
+    font-size: 11px;
+    color: var(--text-2);
+    border: 1px solid var(--hair);
+    border-radius: 999px;
+    padding: 3px 10px;
+  }
+
+  .station-foot{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    border-top: 1px solid var(--hair);
+    padding-top: 14px;
+  }
+  .scenario-count{ font-size: 12px; color: var(--text-2); font-family: 'JetBrains Mono', monospace; }
+  .scenario-count b{ color: var(--gold); font-weight: 500; }
+
+  .enter{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--blue);
+  }
+  .enter svg{ width:14px; height:14px; transition: transform 0.2s ease; }
+  .station:hover .enter svg{ transform: translateX(3px); }
+
+  footer{
+    text-align:center;
+    margin-top: 44px;
+    color: var(--text-2);
+    font-size: 11.5px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.04em;
+    line-height: 1.8;
+  }
+  footer .line{ width: 36px; height:1px; background: var(--hair-strong); margin: 0 auto 16px; }
+
+  @media (min-width: 540px){
+    .wrap{ padding-top: 64px; }
+    h1{ font-size: 28px; }
+  }
+
+  /* ---------- white section (cards + footer) ---------- */
+  .light-section{
+    --panel: #F4F6F9;
+    --panel-hi: #EAF0F8;
+    --blue: #0057A8;
+    --blue-dim: rgba(0,87,168,0.08);
+    --gold: #C9852A;
+    --text-1: #16293C;
+    --text-2: #5C6575;
+    --hair: rgba(22,41,60,0.12);
+    --hair-strong: rgba(22,41,60,0.24);
+    background: #FFFFFF;
+    position: relative;
+    z-index: 2;
+  }
+  .light-section .wrap{ padding-top: 36px; }
+  .light-section .station{
+    box-shadow: 0 1px 2px rgba(22,41,60,0.04), 0 6px 16px rgba(22,41,60,0.05);
+  }
+  .light-section .station:hover{
+    box-shadow: 0 2px 4px rgba(22,41,60,0.05), 0 10px 22px rgba(22,41,60,0.08);
+  }
+</style>
+</head>
+<body>
+
+<div class="scene">
+
+  <div class="radar-field" aria-hidden="true">
+    <svg viewBox="0 0 640 640">
+      <circle cx="320" cy="320" r="300" fill="none" stroke="#4FA3F0" stroke-opacity="0.12" stroke-width="1"/>
+      <circle cx="320" cy="320" r="220" fill="none" stroke="#4FA3F0" stroke-opacity="0.12" stroke-width="1"/>
+      <circle cx="320" cy="320" r="140" fill="none" stroke="#4FA3F0" stroke-opacity="0.13" stroke-width="1"/>
+      <circle cx="320" cy="320" r="60"  fill="none" stroke="#4FA3F0" stroke-opacity="0.15" stroke-width="1"/>
+      <line x1="20" y1="320" x2="620" y2="320" stroke="#4FA3F0" stroke-opacity="0.07"/>
+      <line x1="320" y1="20" x2="320" y2="620" stroke="#4FA3F0" stroke-opacity="0.07"/>
+
+      <g class="sweep">
+        <path d="M320 320 L320 20 A300 300 0 0 1 533 119 Z" fill="#4FA3F0" fill-opacity="0.11"/>
+      </g>
+
+      <circle class="pulse" cx="430" cy="240" r="4" fill="#4FA3F0"/>
+      <circle class="pulse" cx="240" cy="420" r="4" fill="#4FA3F0" style="animation-delay:0.7s"/>
+      <circle class="pulse" cx="390" cy="430" r="4" fill="#E8A23C" style="animation-delay:1.4s"/>
+    </svg>
+  </div>
+
+  <div class="wrap">
+
+    <header class="top">
+      <div class="eyebrow"><span class="dot"></span>AOHAI · SALES ENABLEMENT</div>
+      <h1>三个工具支撑销售随时具备场景方案、专业话术与竞品打法</h1>
+      <p class="sub">遨海科技市场部出品，三个工具相互独立、各有侧重，利用碎片时间按需进入训练。</p>
+      <div class="statusline">
+        <span>节点 <b>3</b></span>
+        <span>状态 <b style="color:var(--blue)">在线</b></span>
+        <span>更新 <b>2026.06</b></span>
+      </div>
+    </header>
+
+  </div>
+</div>
+
+<div class="light-section">
+  <div class="wrap">
+
+    <div class="stations">
+
+      <!-- 1: 销售场景战卡 -->
+      <a class="station" href="https://zhuzhu6223-create.github.io/Sales-Scenario-Learning-Card/" target="_blank" rel="noopener">
+        <div class="station-top">
+          <span class="code">WT · 01</span>
+          <div class="live"><span class="ld"></span>READY</div>
+        </div>
+        <div class="station-head">
+          <div class="icon-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#4FA3F0" stroke-width="1.6">
+              <rect x="3" y="5" width="14" height="10" rx="2"/>
+              <rect x="7" y="9" width="14" height="10" rx="2" fill="#153463"/>
+            </svg>
+          </div>
+          <div>
+            <h2>销售场景战卡</h2>
+            <p>港口监管、海工安全、VDES通信、内河航运、海上文旅、渔业渔港 —— 六大场景的卡片学习、闪卡与话术速查。</p>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">六大场景</span>
+          <span class="tag">闪卡训练</span>
+          <span class="tag">综合测验</span>
+          <span class="tag">错题重练</span>
+        </div>
+        <div class="station-foot">
+          <span class="scenario-count">覆盖 <b>6</b> 大场景</span>
+          <span class="enter">进入训练
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <!-- 2: 遨海百词斩 -->
+      <a class="station" href="https://zhuzhu6223-create.github.io/Aohai-vocabulary/" target="_blank" rel="noopener">
+        <div class="station-top">
+          <span class="code">VOC · 02</span>
+          <div class="live"><span class="ld"></span>READY</div>
+        </div>
+        <div class="station-head">
+          <div class="icon-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#4FA3F0" stroke-width="1.6">
+              <path d="M4 19V6a2 2 0 0 1 2-2h13v15"/>
+              <path d="M4 19a2 2 0 0 0 2 2h13"/>
+              <path d="M4 15h15"/>
+            </svg>
+          </div>
+          <div>
+            <h2>遨海百词斩</h2>
+            <p>海事通信专业词汇库，基于 AT-B20 VDES 与 AT-B20A AIS 基站资料构建，支持翻卡、选择测试与每日推荐。</p>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">VDES / AIS 词库</span>
+          <span class="tag">翻卡学习</span>
+          <span class="tag">每日推荐</span>
+        </div>
+        <div class="station-foot">
+          <span class="scenario-count">专业词汇 <b>持续更新</b></span>
+          <span class="enter">进入背词
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <!-- 3: 竞品知识闯关 -->
+      <a class="station" href="https://zhuzhu6223-create.github.io/aohai-sales-tool-analysis-for-competitive-products/" target="_blank" rel="noopener">
+        <div class="station-top">
+          <span class="code">CMP · 03</span>
+          <div class="live"><span class="ld"></span>READY</div>
+        </div>
+        <div class="station-head">
+          <div class="icon-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#4FA3F0" stroke-width="1.6">
+              <circle cx="12" cy="12" r="9"/>
+              <circle cx="12" cy="12" r="4.5"/>
+              <circle cx="12" cy="12" r="0.8" fill="#4FA3F0"/>
+            </svg>
+          </div>
+          <div>
+            <h2>销售竞品知识闯关</h2>
+            <p>以闯关形式学习产品能力、竞品认知与销售实战，适合销售团队系统训练竞品打法。</p>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag">闯关学习</span>
+          <span class="tag">竞品认知</span>
+          <span class="tag">实战演练</span>
+        </div>
+        <div class="station-foot">
+          <span class="scenario-count">闯关模式 <b>三阶段</b></span>
+          <span class="enter">开始闯关
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </div>
+      </a>
+
+    </div>
+
+    <footer>
+      <div class="line"></div>
+      遨海科技 · 市场部<br>
+      AOHAI TECHNOLOGY · GOV & MARKET AFFAIRS
+    </footer>
+
+  </div>
+</div>
+
+</body>
+</html>
